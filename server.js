@@ -10,6 +10,10 @@ const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:5500';
 app.use(cors({ origin: ALLOWED_ORIGIN }));
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Health Insurance API is running');
+});
+
 // 1. ping (wake-up)
 app.get('/api/ping', (req, res) => {
   res.json({ message: 'Server is awake' });
