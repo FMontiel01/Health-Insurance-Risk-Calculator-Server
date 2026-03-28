@@ -19,7 +19,7 @@ app.get('/api/ping', (req, res) => {
   res.json({ message: 'Server is awake' });
 });
 
-// 2. blood-pressure
+// 2. bp-category
 function getBP(systolic, diastolic) {
   if (systolic > 180 || diastolic > 120) {
     return { category: "Hypertensive Crisis", risk : "critical"};
