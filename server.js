@@ -67,6 +67,76 @@ app.get("/getBP", (req, res) => {
   res.json(result);
 })
 
+// Body Mass Index Calculator
+app.get('/api/bmi', (req, res) => {
+    // For GET requests, data comes from req.query
+    const weight = parseFloat(req.query.weightLbs);
+    const feet = parseFloat(req.query.heightFeet);
+    const inches = parseFloat(req.query.heightInches);
+    
+    console.log('BMI calculation for:', weight, 'lbs,', feet, 'ft', inches, 'in');
+    
+    // Make sure we have all the numbers
+    if (isNaN(weight) || isNaN(feet) || isNaN(inches)) {
+        return res.status(400).json({ 
+            error: 'Please provide weightLbs, heightFeet, and heightInches as numbers'
+        });
+    }
+    
+    // Check if numbers make sense
+    if (weight <= 0) {
+        return res.status(400).json({ error: 'Weight must be more than 0' });
+    }
+    
+    if (feet < 0 || inches < 0) {
+        return res.status(400).json({ error: 'Height cannot be negative' });
+    }
+    
+    if (feet === 0 && inches === 0) {
+        return res.status(400).json({ error: 'Height must be greater than 0' });
+    }
+    
+    // Calculate total height in inches
+    const totalInches = (feet * 12) + inches;
+    
+    // Convert to metric 
+    const weightKg = weight * 0.453592;
+    const heightM = totalInches * 0.0254;
+    
+    // Calculate BMI
+    const bmiValue = weightKg / (heightM * heightM);
+    const bmi = Math.round(bmiValue * 10) / 10;
+    
+    // Figure out the category and points 
+    let category;
+    let points;
+    
+    if (bmi >= 30) {
+        category = 'obese';
+        points = 75;
+    } else if (bmi >= 25) {
+        category = 'overweight';
+        points = 30;
+    } else if (bmi >= 18.5) {
+        category = 'normal';
+        points = 0;
+    } else {
+        category = 'underweight';
+        points = 0;
+    }
+    
+    // Send back the result
+    res.json({
+        bmi: bmi,
+        category: category,
+        points: points
+    });
+    
+    console.log('Result:', bmi, '-', category, '-', points, 'points');
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
